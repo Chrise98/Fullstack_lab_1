@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dish Recipes</title>
+</head>
+<body>
+  <h1>Dish Recipes</h1>
+  
+  <!-- Dish Table -->
+  <table id="dishTable">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Ingredients</th>
+        <th>Preparation Steps</th>
+        <th>Cooking Time</th>
+        <th>Origin</th>
+        <th>Spice Level</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Dish rows will be inserted here -->
+    </tbody>
+  </table>
+
+  <h2>Add a New Dish</h2>
+  <form id="addDishForm">
+    <label for="name">Dish Name:</label>
+    <input type="text" id="name" required>
+
+    <label for="ingredients">Ingredients:</label>
+    <input type="text" id="ingredients" required>
+
+    <label for="preparationSteps">Preparation Steps:</label>
+    <input type="text" id="preparationSteps" required>
+
+    <label for="cookingTime">Cooking Time:</label>
+    <input type="number" id="cookingTime" required>
+
+    <label for="origin">Origin:</label>
+    <input type="text" id="origin" required>
+
+    <label for="spiceLevel">Spice Level:</label>
+    <input type="text" id="spiceLevel" required>
+
+    <button type="submit">Add Dish</button>
+  </form>
+
+  <script>
+    // Fetch and display dishes
+    async function fetchDishes() {
+      try {
+        const response = await fetch('/api/dishes');
+        const dishes = await response.json();
+
+        const dishTable = document.querySelector('#dishTable tbody');
+        dishTable.innerHTML = ''; // Clear existing rows
+
+        dishes.forEach(dish => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${dish.name}</td>
+            <td>${dish.ingredients.join(', ')}</td>
+            <td>${dish.preparationSteps.join(', ')}</td>
+            <td>${dish.cookingTime} min</td>
+            <td>${dish.origin}</td>
+            <td>${dish.spiceLevel}</td>
+            <td>
+              <button onclick="updateDish('${dish._id}', '${dish.name}', '${dish.ingredients.join(', ')}', '${dish.preparationSteps.join(', ')}', '${dish.cookingTime}', '${dish.origin}', '${dish.spiceLevel}')">Update</button>
+              <button onclick="deleteDish('${dish._id}')">Delete</button>
+            </td>
+          `;
+          dishTable.appendChild(row);
+        });
+      } catch (error) {
+        console.error('Error fetching dishes:', error);
+      }
+    }
+
+    // Add a new dish
+    document.getElementById('addDishForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const newDish = {
+        name: document.getElementById('name').value,
+        ingredients: document.getElementById('ingredients').value.split(','),
+        preparationSteps: document.getElementById('preparationSteps').value.split(','),
+        cookingTime: parseInt(document.getElementById('cookingTime').value),
+        origin: document.getElementById('origin').value,
+        spiceLevel: document.getElementById('spiceLevel').value
+      };
+
+      try {
+        const response = await fetch('/api/dishes', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(newDish)
+        });
+
+        if (response.status === 201) {
+          fetchDishes(); // Refresh table
+          document.getElementById('addDishForm').reset();
+        } else if (response.status === 409) {
+          alert('Dish already exists!');
+        } else {
+          alert('Error adding dish!');
+        }
+      } catch (error) {
+        console.error('Error adding dish:', error);
+      }
+    });
+
+    // Update dish
+    async function updateDish(id, name, ingredients, preparationSteps, cookingTime, origin, spiceLevel) {
+      const newName = prompt("Update Dish Name:", name);
+      const newIngredients = prompt("Update Ingredients (comma-separated):", ingredients);
+      const newPreparationSteps = prompt("Update Preparation Steps (comma-separated):", preparationSteps);
+      const newCookingTime = prompt("Update Cooking Time:", cookingTime);
+      const newOrigin = prompt("Update Origin:", origin);
+      const newSpiceLevel = prompt("Update Spice Level:", spiceLevel);
+
+      if (newName && newIngredients && newPreparationSteps && newCookingTime && newOrigin && newSpiceLevel) {
+        const updatedDish = {
+          name: newName,
+          ingredients: newIngredients.split(','),
+          preparationSteps: newPreparationSteps.split(','),
+          cookingTime: parseInt(newCookingTime),
+          origin: newOrigin,
+          spiceLevel: newSpiceLevel
+        };
+
+        try {
+          const response = await fetch(`/api/dishes/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(updatedDish)
+          });
+
+          if (response.ok) {
+            fetchDishes();
+          } else {
+            alert('Error updating dish!');
+          }
+        } catch (error) {
+          console.error('Error updating dish:', error);
+        }
+      }
+    }
+
+    // Delete dish
+    async function deleteDish(id) {
+      if (confirm('Are you sure you want to delete this dish?')) {
+        try {
+          const response = await fetch(`/api/dishes/${id}`, {
+            method: 'DELETE'
+          });
+
+          if (response.ok) {
+            fetchDishes(); // Refresh the table
+          } else {
+            alert('Error deleting dish!');
+          }
+        } catch (error) {
+          console.error('Error deleting dish:', error);
+        }
+      }
+    }
+
+    // Load dishes on page load
+    fetchDishes();
+  </script>
+</body>
+</html>
