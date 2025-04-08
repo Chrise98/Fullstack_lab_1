@@ -1,4 +1,7 @@
-require("dotenv").config(); // Load environment variables
+
+// Load environment variables
+
+require("dotenv").config(); 
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -8,30 +11,29 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 const CONNECTION_URL = process.env.CONNECTION_URL;
 
-// Middleware
+// Serves index.html when visiting /
 app.use(cors());
 app.use(bodyParser.json());
-app.use(express.static(__dirname)); // Serves index.html when visiting /
+app.use(express.static(__dirname)); 
 
 mongoose
   .connect(CONNECTION_URL, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log("✅ MongoDB connected successfully!"))
   .catch((err) => console.error("❌ MongoDB connection error:", err));
 
-// Schema & Model for Dishes
+// Schema & Model for Dishes and custom field
 const dishSchema = new mongoose.Schema({
   name: { type: String, required: true, unique: true },
   ingredients: [String],
   preparationSteps: [String],
   cookingTime: Number,
   origin: String,
-  spiceLevel: String, // Custom field
+  spiceLevel: String, 
 });
 
 const Dish = mongoose.model("Dish", dishSchema);
 
 // Routes
-
 // GET all dishes
 app.get("/api/dishes", async (req, res) => {
   try {
@@ -95,9 +97,9 @@ app.delete("/api/dishes/:id", async (req, res) => {
     res.status(500).json({ message: "Error deleting dish" });
   }
 });
-
+// add dishes to the menu
 async function seedDatabase() {
-    await Dish.deleteMany({}); // Clear existing dishes
+    await Dish.deleteMany({}); 
     const sampleDishes = [
       {
         name: "Spaghetti Carbonara",

@@ -4,10 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dish Recipes</title>
+  <link rel="stylesheet" href="index.css">
 </head>
 <body>
   <h1>Dish Recipes</h1>
-  
   <!-- Dish Table -->
   <table id="dishTable">
     <thead>
@@ -22,7 +22,7 @@
       </tr>
     </thead>
     <tbody>
-      <!-- Dish rows will be inserted here -->
+      
     </tbody>
   </table>
 
@@ -57,7 +57,7 @@
         const dishes = await response.json();
 
         const dishTable = document.querySelector('#dishTable tbody');
-        dishTable.innerHTML = ''; // Clear existing rows
+        dishTable.innerHTML = ''; 
 
         dishes.forEach(dish => {
           const row = document.createElement('tr');
