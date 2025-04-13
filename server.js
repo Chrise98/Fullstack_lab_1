@@ -1,21 +1,26 @@
 
 // Load environment variables
 
+//Import dependencies
 require("dotenv").config(); 
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 
-const app = express();
+//App configuration
+const app = express(); //initilize the app
 const PORT = process.env.PORT || 5000;
-const CONNECTION_URL = process.env.CONNECTION_URL;
+const CONNECTION_URL = process.env.CONNECTION_URL; //set the port to database .env
 
-// Serves index.html when visiting /
+// Serves index.html when visiting and JSON request
 app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static(__dirname)); 
 
+
+//Connect to MongoDB Atlas cluser using credential from .env
+// Succes or a failure
 mongoose
   .connect(CONNECTION_URL, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log("✅ MongoDB connected successfully!"))
@@ -34,7 +39,7 @@ const dishSchema = new mongoose.Schema({
 const Dish = mongoose.model("Dish", dishSchema);
 
 // Routes
-// GET all dishes
+// GET all dishes in JSON format
 app.get("/api/dishes", async (req, res) => {
   try {
     const dishes = await Dish.find();
@@ -45,6 +50,7 @@ app.get("/api/dishes", async (req, res) => {
 });
 
 // GET a single dish by name
+// Finds a dish by its name
 app.get("/api/dishes/:name", async (req, res) => {
   try {
     const dish = await Dish.findOne({ name: req.params.name });
@@ -56,6 +62,8 @@ app.get("/api/dishes/:name", async (req, res) => {
 });
 
 // POST - Add a new dish
+// check is dish already exists by name
+// if not create a saved dish
 app.post("/api/dishes", async (req, res) => {
   try {
     const existingDish = await Dish.findOne({ name: req.body.name });
@@ -70,6 +78,7 @@ app.post("/api/dishes", async (req, res) => {
 });
 
 // PUT - Update a dish by ID
+// Update an existing dish using MongoDB _id
 app.put("/api/dishes/:id", async (req, res) => {
   try {
     const updatedDish = await Dish.findByIdAndUpdate(req.params.id, req.body, { new: true });
@@ -97,7 +106,8 @@ app.delete("/api/dishes/:id", async (req, res) => {
     res.status(500).json({ message: "Error deleting dish" });
   }
 });
-// add dishes to the menu
+// add dishes to the menu 
+// A seed sampel 
 async function seedDatabase() {
     await Dish.deleteMany({}); 
     const sampleDishes = [
@@ -150,4 +160,5 @@ async function seedDatabase() {
 
 
 // Start server
+// Here starts the backend server on localhost:5000
 app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
