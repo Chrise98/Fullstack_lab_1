@@ -134,7 +134,7 @@ async function seedDatabase() {
         spiceLevel: "Medium",
       },
       {
-        name: "Grandma’s Special Stew", // Personal Dish
+        name: "Moms’s Special Stew", // Personal Dish
         ingredients: ["Beef", "Carrots", "Potatoes", "Tomato Paste", "Garlic"],
         preparationSteps: ["Brown beef", "Add vegetables", "Simmer", "Serve hot"],
         cookingTime: 90,

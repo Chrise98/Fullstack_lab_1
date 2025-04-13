@@ -70,9 +70,17 @@
     color: white;
   }
   
+  td button:first-child:hover{
+    background-color: lightblue;
+  }
+  
   td button:last-child {
     background-color: #e74c3c;
     color: white;
+  }
+
+  td button:last-child:hover{
+    background-color: lightcoral;
   }
   
 
