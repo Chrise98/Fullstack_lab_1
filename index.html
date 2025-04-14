@@ -52,6 +52,7 @@
   <script>
     // Fetch and display all dishes
     async function fetchDishes() {
+      //call get api/dishes to fetach all dishes from backend
       try {
         const response = await fetch('/api/dishes');
         const dishes = await response.json();
@@ -93,6 +94,7 @@
         spiceLevel: document.getElementById('spiceLevel').value
       };
 
+      //post request with the new dishes data and handlers error
       try {
         const response = await fetch('/api/dishes', {
           method: 'POST',
@@ -132,6 +134,8 @@
           spiceLevel: newSpiceLevel
         };
 
+        //put request is to uptade and need a certain id of that this
+
         try {
           const response = await fetch(`/api/dishes/${id}`, {
             method: 'PUT',
@@ -150,7 +154,7 @@
       }
     }
 
-    // Delete dish
+    // Delete request dish and delete the whole document
     async function deleteDish(id) {
       if (confirm('Are you sure you want to delete this dish?')) {
         try {

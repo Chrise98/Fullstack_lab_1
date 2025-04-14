@@ -1,7 +1,8 @@
 
 // Load environment variables
 
-//Import dependencies
+//Import dependencies 
+// we use them as a tools to build API and JSON request
 require("dotenv").config(); 
 const express = require("express");
 const mongoose = require("mongoose");
@@ -14,6 +15,10 @@ const PORT = process.env.PORT || 5000;
 const CONNECTION_URL = process.env.CONNECTION_URL; //set the port to database .env
 
 // Serves index.html when visiting and JSON request
+//Enables CORS (Cross-Origin Resource Sharing)
+//Lets your frontend (like index.html) access your backend 
+//even if they're hosted at different addresses (e.g., localhost:3000 and localhost:5000)
+//Without it, browsers might block API calls with a CORS error
 app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static(__dirname)); 
@@ -107,7 +112,8 @@ app.delete("/api/dishes/:id", async (req, res) => {
   }
 });
 // add dishes to the menu 
-// A seed sampel 
+// A seed sampel of documents
+// Collection table store JSON Documents
 async function seedDatabase() {
     await Dish.deleteMany({}); 
     const sampleDishes = [
